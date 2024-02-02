@@ -4,7 +4,8 @@
 BaseCaching = __import__('base_caching').BaseCaching
 
 
-class LIFOCache(BaseCaching)
+class LIFOCache(BaseCaching):
+    """Implements LIFO caching"""
     def __init__(self) -> None:
         super().__init__()
 
@@ -19,6 +20,7 @@ class LIFOCache(BaseCaching)
             self.cache_data[key] = item
 
     def get(self, key):
+        """Retrieve item by key from cache"""
         if key is not None:
             return self.cache_data[key]
         return None
