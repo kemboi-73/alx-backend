@@ -1,34 +1,40 @@
 #!/usr/bin/env python3
-""" FIFO caching module. """
-from base_caching import BaseCaching
+BaseCaching = __import__('base_caching').BaseCaching
 
 
 class FIFOCache(BaseCaching):
-    """
-    FIFOCache class that inherits from BaseCaching.
+    """_summary_
     """
 
     def __init__(self):
-        """ Initialize """
+        """_summary_
+        """
         super().__init__()
-        self.queue = []
 
     def put(self, key, item):
-        """
-        Add an item to the cache.
-        :param key: Key where the item will be stored.
+        """_summary_
+
+        Args:
+                        key (_type_): _description_
+                        item (_type_): _description_
         """
         if key is None or item is None:
-            return
+            pass
+        else:
+            if len(self.cache_data) >= BaseCaching.MAX_ITEMS \
+                    and key not in self.cache_data.keys():
+                first_key = next(iter(self.cache_data.keys()))
+                del self.cache_data[first_key]
+                print("DISCARD: {}". format(first_key))
 
-        self.cache_data[key] = item
-        if key not in self.queue:
-            self.queue.append(key)
-
-        if len(self.cache_data) > BaseCaching.MAX_ITEMS:
-            first_key = self.queue.pop(0)
-            del self.cache_data[first_key]
-            print("DISCARD: {}".format(first_key))
+            self.cache_data[key] = item
 
     def get(self, key):
-        return self.cache_data.get(key, None)
+        """return the value in self.cache_data linked to key
+
+        Args:
+                        key (_type_): _description_
+        """
+        if key is None or key not in self.cache_data.keys():
+            return None
+        return self.cache_data.get(key)

@@ -1,42 +1,45 @@
 #!/usr/bin/env python3
-"""
-MRU Caching
-"""
-from base_caching import BaseCaching
+
+
+BaseCaching = __import__('base_caching').BaseCaching
 
 
 class MRUCache(BaseCaching):
-    """
-    MRUCache class that inherits from BaseCaching.
-    Implements the MRU (Most Recently Used) caching algorithm.
+    """_summary_
     """
 
     def __init__(self):
-        """
-        Initialize the class.
+        """_summary_
         """
         super().__init__()
-        self.most_recent_key = None
+        self.usedKeys = []
 
     def put(self, key, item):
-        """
-        Add an item to the cache with MRU policy.
-        :param key: Key where the item will be stored.
-        :param item: Item to store in the cache.
+        """_summary_
+
+        Args:
+                        key (_type_): _description_
+                        item (_type_): _description_
         """
         if key is not None and item is not None:
-            if len(self.cache_data) >= BaseCaching.MAX_ITEMS and \
-               key not in self.cache_data:
-                if self.most_recent_key:
-                    del self.cache_data[self.most_recent_key]
-                    print("DISCARD: {}".format(self.most_recent_key))
-
             self.cache_data[key] = item
-            self.most_recent_key = key
+            if key not in self.usedKeys:
+                self.usedKeys.append(key)
+            else:
+                self.usedKeys.append(
+                    self.usedKeys.pop(self.usedKeys.index(key)))
+            if len(self.usedKeys) > BaseCaching.MAX_ITEMS:
+                discard = self.usedKeys.pop(-2)
+                del self.cache_data[discard]
+                print('DISCARD: {:s}'.format(discard))
 
     def get(self, key):
+        """return the value in self.cache_data linked to key
 
-        if key is not None and key in self.cache_data:
-            self.most_recent_key = key
-            return self.cache_data[key]
+        Args:
+                        key (_type_): _description_
+        """
+        if key is not None and key in self.cache_data.keys():
+            self.usedKeys.append(self.usedKeys.pop(self.usedKeys.index(key)))
+            return self.cache_data.get(key)
         return None
